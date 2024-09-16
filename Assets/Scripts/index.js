@@ -202,6 +202,8 @@ function setupPagination() {
 
 function openProfileModal(profileName) {
     const profile = data.find(item => item.name === profileName);
+    const user = firebase.auth().currentUser;
+
     if (profile) {
         const iconPrefix = profile.info.source === 'reddit' ? 'https://preview.redd.it/' : 'https://pbs.twimg.com/profile_images/';
         const fullicon = iconPrefix + profile.icon;
@@ -253,10 +255,63 @@ function openProfileModal(profileName) {
                     <span class="d-block text-sm text-muted">${profile.info.kinks.length ? profile.info.kinks.join(', ') : 'N/A'}</span>
                 </div>
             </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <label for="rate">Rate this profile</label>
+                    <input type="range" class="form-range" min="1" max="10" step="1" id="rate" value="5">
+                    <span id="modalProfileRate">Your Rating: None</span>
+                </div>
+            </div>
         `;
 
+        if (user) {
+            const userId = user.uid;
+            const userRating = profile.ratings ? profile.ratings[userId] : null;
+
+            if (userRating) {
+                document.getElementById('modalProfileRate').innerText = `Your Rating: ${userRating}`;
+                document.getElementById('rate').value = userRating;
+            } else {
+                document.getElementById('modalProfileRate').innerText = 'Your Rating: None';
+                document.getElementById('rate').value = 5;
+            }
+
+            document.getElementById('rate').style.display = 'block';
+        } else {
+            document.getElementById('modalProfileRate').innerText = 'Log in to rate this profile.';
+            document.getElementById('rate').style.display = 'none';
+        }
+
+        document.getElementById('rate').addEventListener('input', async (event) => {
+            const rating = parseInt(event.target.value);
+            const user = firebase.auth().currentUser;
+            if (!user) return;
+
+            const userId = user.uid;
+            if (!profile.ratings) {
+                profile.ratings = {};
+            }
+
+            profile.ratings[userId] = rating;
+            await saveRatingToFirebase(profileName, profile.ratings);
+            document.getElementById('modalProfileRate').innerText = `Your Rating: ${rating}`;
+            calculateAndDisplayRating(profile);
+        });
+
+        calculateAndDisplayRating(profile);
         const profileModal = new bootstrap.Offcanvas(document.getElementById("profileModal"));
         profileModal.show();
+    }
+}
+
+async function saveRatingToFirebase(profileName, ratings) {
+    try {
+        await db.collection('profiles').doc(profileName).set({
+            ratings: ratings
+        }, { merge: true });
+        console.log('Rating saved successfully');
+    } catch (error) {
+        console.error('Error saving rating to Firestore:', error);
     }
 }
 

@@ -26,113 +26,100 @@
 </head>
 
 <body>
-    <div class="profile-section">
-        <div class="profile-dropdown">
-            <img id="profile-picture" src="Assets/Images/Brand/logo_3.png" alt="Profile Picture" class="profile-img">
-            <span id="profile-name">Anonymous</span>
-        </div>
-        <div id="dropdown-menu" class="dropdown-content">
-            <button id="login-button">Login</button>
-            <button id="saves-button" style="display: none;">Saves</button>
-        </div>
-    </div>
-
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="profileModal" aria-labelledby="profileModalLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="profileModalLabel">Profile Details</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div id="linkBodyView"></div>
-
-            <p id="modalProfileRating"></p>
-            <p id="modalProfileRatings"></p>
-            <label for="rate" class="form-label">[profile]'s Attractiveness Rating</label>
-            <input type="range" class="form-range" min="1" max="10" step="1" id="rate" style="display: none;">
-            <p id="modalProfileRate"></p>
-        </div>
-    </div>
-
-    <div class="container py-5">
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <input type="text" id="searchBar" class="form-control" placeholder="Search here...">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <img id="profile-picture" src="Assets/Images/Brand/logo_3.png" class="avatar rounded-circle"
+                    alt="Profile Picture">
+                <span id="profile-name">Anonymous</span>
             </div>
-            <div class="col-md-4 d-flex justify-content-end align-items-center">
-                <div class="d-inline-block me-3">
-                    <label for="sortOptions" class="form-label">Sort by:</label>
-                    <select id="sortOptions" class="form-select">
-                        <option value="relevance">Relevance</option>
-                        <option value="nameAsc">A-Z (Name)</option>
-                        <option value="nameDesc">Z-A (Name)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-2 d-flex justify-content-end align-items-center">
-                <button id="clearFilters" class="btn btn-outline-danger">Clear Filters</button>
+            <div>
+                <button id="login-button" class="btn btn-primary">Login</button>
+                <button id="saves-button" class="btn btn-secondary" style="display:none;">Saves</button>
             </div>
         </div>
 
         <div class="row mb-3">
-            <div class="col">
+            <div class="col-md-6">
+                <input type="text" id="searchBar" class="form-control" placeholder="Search profiles...">
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <select id="sortOptions" class="form-select w-auto">
+                    <option value="relevance">Sort by: Relevance</option>
+                    <option value="nameAsc">Sort by: Name (A-Z)</option>
+                    <option value="nameDesc">Sort by: Name (Z-A)</option>
+                </select>
+                <button id="clearFilters" class="btn btn-outline-danger ms-3">Clear Filters</button>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12 col-md-3">
                 <h5>Filters</h5>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="gay" id="gay" name="sexuality">
+                    <label class="form-check-label" for="gay">Gay</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="straight" id="straight" name="sexuality">
+                    <label class="form-check-label" for="straight">Straight</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="lesbian" id="lesbian" name="sexuality">
+                    <label class="form-check-label" for="lesbian">Lesbian</label>
+                </div>
+            </div>
 
-                <h6>Sexuality</h6>
+            <div class="col-md-3">
+                <h5>Body</h5>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="sexuality" value="gay" id="gay">
-                    <label for="gay" class="form-check-label">Gay</label>
+                    <input class="form-check-input" type="checkbox" value="twink" id="twink" name="body">
+                    <label class="form-check-label" for="twink">Twink</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="sexuality" value="straight" id="straight">
-                    <label for="straight" class="form-check-label">Straight</label>
+                    <input class="form-check-input" type="checkbox" value="twunk" id="twunk" name="body">
+                    <label class="form-check-label" for="twunk">Twunk</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="sexuality" value="lesbian" id="lesbian">
-                    <label for="lesbian" class="form-check-label">Lesbian</label>
+                    <input class="form-check-input" type="checkbox" value="jock" id="jock" name="body">
+                    <label class="form-check-label" for="jock">Jock</label>
                 </div>
+            </div>
 
-                <h6>Body</h6>
+            <div class="col-md-3">
+                <h5>Activity</h5>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="body" value="twink" id="twink">
-                    <label for="twink" class="form-check-label">Twink</label>
+                    <input class="form-check-input" type="checkbox" value="active" id="active" name="activity">
+                    <label class="form-check-label" for="active">Active</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="body" value="twunk" id="twunk">
-                    <label for="twunk" class="form-check-label">Twunk</label>
+                    <input class="form-check-input" type="checkbox" value="inactive" id="inactive" name="activity">
+                    <label class="form-check-label" for="inactive">Inactive</label>
                 </div>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="body" value="jock" id="jock">
-                    <label for="jock" class="form-check-label">Jock</label>
-                </div>
+            </div>
 
-                <h6>Activity</h6>
+            <div class="col-md-3">
+                <h5>Kinks</h5>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="activity" value="active" id="active">
-                    <label for="active" class="form-check-label">Active</label>
+                    <input class="form-check-input" type="checkbox" value="exhibition" id="exhibition" name="kinks">
+                    <label class="form-check-label" for="exhibition">Exhibition</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="activity" value="inactive" id="inactive">
-                    <label for="inactive" class="form-check-label">Inactive</label>
-                </div>
-
-                <h6>Kinks</h6>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="kinks" value="exhibition" id="exhibition">
-                    <label for="exhibition" class="form-check-label">Exhibition</label>
+                    <input class="form-check-input" type="checkbox" value="muscle" id="muscle" name="kinks">
+                    <label class="form-check-label" for="muscle">Muscle</label>
                 </div>
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="kinks" value="muscle" id="muscle">
-                    <label for="muscle" class="form-check-label">Muscle</label>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" name="kinks" value="roleplay" id="roleplay">
-                    <label for="roleplay" class="form-check-label">Roleplay</label>
+                    <input class="form-check-input" type="checkbox" value="roleplay" id="roleplay" name="kinks">
+                    <label class="form-check-label" for="roleplay">Roleplay</label>
                 </div>
             </div>
         </div>
 
-        <div id="resultsContainer" class="row">
+        <div class="col-12 col-md-9">
+            <div>
+                <div id="results-container" class="row g-3 g-xl-5 mt-1">
+                </div>
+            </div>
         </div>
 
         <nav id="pagination" class="d-flex justify-content-center mt-4">
@@ -156,12 +143,19 @@
         </nav>
     </div>
 
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="profileModal" aria-labelledby="profileModalLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="profileModalLabel">Profile Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" id="linkBodyView">
+        </div>
+    </div>
 
     <!-- Google -->
     <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
-
 
     <!-- Functions-->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
