@@ -161,7 +161,7 @@ function openProfileModal(profileName) {
     const profile = data.find(item => item.name === profileName);
     const user = firebase.auth().currentUser;
 
-    if (profile && user) {
+    if (profile) {
         document.getElementById("modalProfileName").innerText = profile.name;
         document.getElementById("modalProfileSexuality").innerText = `Sexuality: ${profile.details.sexuality}`;
         document.getElementById("modalProfileBody").innerText = `Body: ${profile.details.body}`;
@@ -170,19 +170,26 @@ function openProfileModal(profileName) {
         document.getElementById("modalProfileRace").innerText = `Race: ${profile.details.race}`;
         document.getElementById("modalProfileSource").innerText = `Source: ${profile.details.source}`;
         document.getElementById("modalProfileKinks").innerText = `Kinks: ${profile.details.kinks.join(", ")}`;
-        const userId = user.uid;
-        const userRating = profile.ratings ? profile.ratings[userId] : null;
 
-        if (userRating) {
-            document.getElementById('modalProfileRate').innerText = `Your Rating: ${userRating}`;
-            document.getElementById('rate').value = userRating;
+        if (user) {
+            const userId = user.uid;
+            const userRating = profile.ratings ? profile.ratings[userId] : null;
+
+            if (userRating) {
+                document.getElementById('modalProfileRate').innerText = `Your Rating: ${userRating}`;
+                document.getElementById('rate').value = userRating;
+            } else {
+                document.getElementById('modalProfileRate').innerText = 'Your Rating: None';
+                document.getElementById('rate').value = 5;
+            }
+
+            document.getElementById('rate').style.display = 'block';
         } else {
-            document.getElementById('modalProfileRate').innerText = 'Your Rating: None';
-            document.getElementById('rate').value = 5;
+            document.getElementById('modalProfileRate').innerText = 'Log in to rate this profile.';
+            document.getElementById('rate').style.display = 'none';
         }
 
         calculateAndDisplayRating(profile);
-
         const profileModal = new bootstrap.Offcanvas(document.getElementById("profileModal"));
         profileModal.show();
     }
