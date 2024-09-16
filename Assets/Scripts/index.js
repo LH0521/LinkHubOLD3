@@ -145,19 +145,22 @@ function openProfileModal(profileName) {
     }
 }
 
-document.getElementById('rate').addEventListener('input', (event) => {
+document.getElementById('rate').addEventListener('input', async (event) => {
     const rating = parseInt(event.target.value);
     const profileName = document.getElementById('modalProfileName').innerText;
     const profile = data.find(item => item.name === profileName);
-    
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    const userId = user.uid;
+
     if (!profile.ratings) {
-        profile.ratings = [];
+        profile.ratings = {};
     }
 
-    profile.ratings.push(rating);
+    profile.ratings[userId] = rating;
+    await saveRatingToFirebase(profileName, profile.ratings);
     calculateAndDisplayRating(profile);
 });
-
 
 function calculateAndDisplayRating(profile) {
     if (profile.ratings && profile.ratings.length > 0) {
@@ -171,6 +174,20 @@ function calculateAndDisplayRating(profile) {
         document.getElementById('modalProfileRatings').innerText = 'No Reviews';
     }
 }
+
+async function saveRatingToFirebase(profileName, ratings) {
+    const db = firebase.firestore();
+
+    try {
+        await db.collection('profiles').doc(profileName).set({
+            ratings: ratings
+        }, { merge: true });
+        console.log('Rating saved successfully');
+    } catch (error) {
+        console.error('Error saving rating to Firestore:', error);
+    }
+}
+
 
 renderResults(filteredData, currentPage);
 setupPagination();
