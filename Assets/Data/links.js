@@ -2,8 +2,8 @@ const data = [
     {
         "name": "ExhibBoy",
         "link": "PvblicBoy",
-        "pfp": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
-        "details": {
+        "icon": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
+        "info": {
             "kinks": ["Exhibition"],
             "sports": [],
             "experience": "Professional",
@@ -18,8 +18,8 @@ const data = [
     {
         "name": "ExhibBoy",
         "link": "PvblicBoy",
-        "pfp": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
-        "details": {
+        "icon": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
+        "info": {
             "kinks": ["Exhibition"],
             "sports": [],
             "experience": "Professional",
@@ -34,8 +34,8 @@ const data = [
     {
         "name": "ExhibBoy",
         "link": "PvblicBoy",
-        "pfp": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
-        "details": {
+        "icon": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
+        "info": {
             "kinks": ["Exhibition"],
             "sports": [],
             "experience": "Professional",
@@ -50,8 +50,8 @@ const data = [
     {
         "name": "ExhibBoy",
         "link": "PvblicBoy",
-        "pfp": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
-        "details": {
+        "icon": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
+        "info": {
             "kinks": ["Exhibition"],
             "sports": [],
             "experience": "Professional",
@@ -66,8 +66,8 @@ const data = [
     {
         "name": "ExhibBoy",
         "link": "PvblicBoy",
-        "pfp": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
-        "details": {
+        "icon": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
+        "info": {
             "kinks": ["Exhibition"],
             "sports": [],
             "experience": "Professional",
@@ -82,8 +82,8 @@ const data = [
     {
         "name": "ExhibBoy",
         "link": "PvblicBoy",
-        "pfp": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
-        "details": {
+        "icon": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
+        "info": {
             "kinks": ["Exhibition"],
             "sports": [],
             "experience": "Professional",
@@ -98,8 +98,8 @@ const data = [
     {
         "name": "ExhibBoy",
         "link": "PvblicBoy",
-        "pfp": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
-        "details": {
+        "icon": "https://pbs.twimg.com/profile_images/1819821904653365248/LCaWV3wa_400x400.jpg",
+        "info": {
             "kinks": ["Exhibition"],
             "sports": [],
             "experience": "Professional",

@@ -63,7 +63,7 @@ let totalPages = 1;
 let filteredData = [...data];
 
 const fuseOptions = {
-    keys: ['name', 'details.sexuality', 'details.body', 'details.activity'],
+    keys: ['name', 'info.sexuality', 'info.body', 'info.activity'],
     threshold: 0.4,
 };
 
@@ -87,7 +87,7 @@ function renderResults(results, page = 1) {
         div.innerHTML = `
             <div class="card shadow-sm profile-item" data-name="${item.name}">
                 <div class="card-body text-center">
-                    <img src="${item.pfp}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px;">
+                    <img src="${item.icon}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px;">
                     <h5 class="card-title">${item.name}</h5>
                     <p class="card-text"><strong>Sexuality:</strong> ${item.details.sexuality}</p>
                     <p class="card-text"><strong>Body:</strong> ${item.details.body}</p>
@@ -124,19 +124,19 @@ function filterResults() {
     filteredData = searchTerm ? fuse.search(searchTerm).map(result => result.item) : [...data];
 
     if (selectedSexuality.length > 0) {
-        filteredData = filteredData.filter(item => selectedSexuality.includes(item.details.sexuality.toLowerCase()));
+        filteredData = filteredData.filter(item => selectedSexuality.includes(item.info.sexuality.toLowerCase()));
     }
 
     if (selectedBody.length > 0) {
-        filteredData = filteredData.filter(item => selectedBody.includes(item.details.body.toLowerCase()));
+        filteredData = filteredData.filter(item => selectedBody.includes(item.info.body.toLowerCase()));
     }
 
     if (selectedActivity.length > 0) {
-        filteredData = filteredData.filter(item => selectedActivity.includes(item.details.activity.toLowerCase()));
+        filteredData = filteredData.filter(item => selectedActivity.includes(item.info.activity.toLowerCase()));
     }
 
     if (selectedKinks.length > 0) {
-        filteredData = filteredData.filter(item => item.details.kinks.some(kink => selectedKinks.includes(kink.toLowerCase())));
+        filteredData = filteredData.filter(item => item.info.kinks.some(kink => selectedKinks.includes(kink.toLowerCase())));
     }
 
     if (sortOption === "nameAsc") {
@@ -219,14 +219,58 @@ function openProfileModal(profileName) {
     const user = firebase.auth().currentUser;
 
     if (profile) {
-        document.getElementById("modalProfileName").innerText = profile.name;
-        document.getElementById("modalProfileSexuality").innerText = `Sexuality: ${profile.details.sexuality}`;
-        document.getElementById("modalProfileBody").innerText = `Body: ${profile.details.body}`;
-        document.getElementById("modalProfileActivity").innerText = `Activity: ${profile.details.activity}`;
-        document.getElementById("modalProfileExperience").innerText = `Experience: ${profile.details.experience}`;
-        document.getElementById("modalProfileRace").innerText = `Race: ${profile.details.race}`;
-        document.getElementById("modalProfileSource").innerText = `Source: ${profile.details.source}`;
-        document.getElementById("modalProfileKinks").innerText = `Kinks: ${profile.details.kinks.join(", ")}`;
+        const linkPrefix = profile.info.source === 'reddit' ? 'u/' : '@';
+        const urlPrefix = profile.info.source === 'reddit' ? 'https://www.reddit.com/user/' : 'https://x.com/';
+        const iconPrefix = profile.info.source === 'reddit' ? 'https://preview.redd.it/' : 'https://pbs.twimg.com/profile_images/';
+        const fullUrl = urlPrefix + profile.link;
+        const fullicon = iconPrefix + profile.icon;
+
+        document.getElementById('linkBodyView').innerHTML = `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row g-0">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <img alt="Profile Picture" class="avatar rounded-1" src="${fullicon}">
+                                </div>
+                                <div class="flex-1">
+                                    <a href="#" class="d-block font-semibold text-sm text-heading text-primary-hover">${profile.name}</a>
+                                    <div class="text-xs text-muted line-clamp-1">${linkPrefix}${profile.link}</div>
+                                </div>
+                                <div class="text-end">
+                                    <a href="${fullUrl}" target="_blank" class="btn btn-sm btn-neutral rounded-pill">
+                                        <i class="bi bi-caret-right me-1"></i>
+                                        <span>Open</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <hr class="my-7">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="col-4">
+                                    <span class="d-block h6 text-heading mb-0">${profile.info.sexuality}</span>
+                                    <span class="d-block text-sm text-muted">Sexuality</span>
+                                </div>
+                                <div class="col-4">
+                                    <span class="d-block h6 text-heading mb-0">${profile.info.body}</span>
+                                    <span class="d-block text-sm text-muted">Body</span>
+                                </div>
+                                <div class="col-4">
+                                    <span class="d-block h6 text-heading mb-0">${profile.info.race}</span>
+                                    <span class="d-block text-sm text-muted">Race</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <span class="d-block h6 text-heading mb-0">Kinks</span>
+                    <span class="d-block text-sm text-muted">${profile.info.kinks.length ? profile.info.kinks.join(', ') : 'N/A'}</span>
+                </div>
+            </div>
+        `;
 
         if (user) {
             const userId = user.uid;
