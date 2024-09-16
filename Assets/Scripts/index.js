@@ -62,6 +62,13 @@ const pageSize = 5;
 let totalPages = 1;
 let filteredData = [...data];
 
+const fuseOptions = {
+    keys: ['name', 'details.sexuality', 'details.body', 'details.activity'],
+    threshold: 0.4,
+};
+
+const fuse = new Fuse(data, fuseOptions);
+
 function renderResults(results, page = 1) {
     const container = document.getElementById("resultsContainer");
     const pagination = document.getElementById("pagination");
@@ -77,7 +84,6 @@ function renderResults(results, page = 1) {
     paginatedResults.forEach(item => {
         const div = document.createElement("div");
         div.classList.add("col-md-4", "mb-4");
-
         div.innerHTML = `
             <div class="card shadow-sm profile-item" data-name="${item.name}">
                 <div class="card-body text-center">
@@ -107,6 +113,29 @@ function renderResults(results, page = 1) {
     nextButton.disabled = page === totalPages;
     pagination.style.display = "block";
 }
+
+function filterResults() {
+    const searchTerm = document.getElementById("searchBar").value.toLowerCase();
+    const sortOption = document.getElementById("sortOptions").value;
+    filteredData = searchTerm ? fuse.search(searchTerm).map(result => result.item) : [...data];
+
+    if (sortOption === "nameAsc") {
+        filteredData.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOption === "nameDesc") {
+        filteredData.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    currentPage = 1;
+    renderResults(filteredData, currentPage);
+}
+
+document.getElementById("searchBar").addEventListener("input", filterResults);
+document.getElementById("sortOptions").addEventListener("change", filterResults);
+document.getElementById("clearFilters").addEventListener("click", () => {
+    document.getElementById("searchBar").value = '';
+    document.getElementById("sortOptions").value = 'relevance';
+    filterResults();
+});
 
 function setupPagination() {
     const prevButton = document.getElementById("prevPage");
@@ -207,5 +236,5 @@ function calculateAndDisplayRating(profile) {
     }
 }
 
-renderResults(filteredData, currentPage);
+filterResults();
 setupPagination();
