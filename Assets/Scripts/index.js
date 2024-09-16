@@ -63,7 +63,7 @@ let totalPages = 1;
 let filteredData = [...data];
 
 const fuseOptions = {
-    keys: ['name', 'info.sexuality', 'info.body', 'info.activity'],
+    keys: ['name', 'info.sexuality', 'info.body', 'info.activity', 'info.kinks'],
     threshold: 0.4,
 };
 
@@ -82,10 +82,12 @@ function renderResults(results, page = 1) {
     const paginatedResults = results.slice((page - 1) * pageSize, page * pageSize);
 
     paginatedResults.forEach(item => {
-        const div = document.createElement("div");
         const iconPrefix = item.info.source === 'reddit' ? 'https://preview.redd.it/' : 'https://pbs.twimg.com/profile_images/';
         const fullicon = iconPrefix + item.icon;
         const linkPrefix = item.info.source === 'reddit' ? 'u/' : '@';
+        const fullUrl = item.info.source === 'reddit' ? `https://www.reddit.com/user/${item.link}` : `https://x.com/${item.link}`;
+
+        const div = document.createElement("div");
         div.classList.add("col-md-4", "mb-4");
         div.innerHTML = `
             <div class="col-lg-4 col-sm-6">
@@ -96,7 +98,7 @@ function renderResults(results, page = 1) {
                                 <img alt="Profile Picture" class="avatar rounded-1" src="${fullicon}">
                             </div>
                             <div class="flex-1">
-                                <a href="#" class="d-block font-semibold text-sm text-heading text-primary-hover">${item.name}</a>
+                                <a href="${fullUrl}" class="d-block font-semibold text-sm text-heading text-primary-hover">${item.name}</a>
                                 <div class="text-xs text-muted line-clamp-1">${linkPrefix}${item.link}</div>
                             </div>
                             <div class="text-end">
@@ -113,7 +115,7 @@ function renderResults(results, page = 1) {
         container.appendChild(div);
     });
 
-    const viewButtons = document.querySelectorAll(".view-details");
+    const viewButtons = document.querySelectorAll(".view-button");
     viewButtons.forEach(button => {
         button.addEventListener("click", (event) => {
             const profileName = event.target.getAttribute("data-name");
@@ -165,14 +167,14 @@ function filterResults() {
 
 document.getElementById("searchBar").addEventListener("input", filterResults);
 document.getElementById("sortOptions").addEventListener("change", filterResults);
-
-document.querySelectorAll("input[name='sexuality'], input[name='body'], input[name='activity']").forEach(checkbox => {
+document.querySelectorAll("input[name='sexuality'], input[name='body'], input[name='activity'], input[name='kinks']").forEach(checkbox => {
     checkbox.addEventListener("change", filterResults);
 });
+
 document.getElementById("clearFilters").addEventListener("click", () => {
     document.getElementById("searchBar").value = '';
     document.getElementById("sortOptions").value = 'relevance';
-    document.querySelectorAll("input[name='sexuality'], input[name='body'], input[name='activity']").forEach(checkbox => {
+    document.querySelectorAll("input[name='sexuality'], input[name='body'], input[name='activity'], input[name='kinks']").forEach(checkbox => {
         checkbox.checked = false;
     });
 
@@ -198,46 +200,13 @@ function setupPagination() {
     });
 }
 
-document.getElementById('rate').addEventListener('input', async (event) => {
-    const rating = parseInt(event.target.value);
-    const profileName = document.getElementById('modalProfileName').innerText;
-    const profile = data.find(item => item.name === profileName);
-
-    const user = firebase.auth().currentUser;
-    if (!user) return;
-    const userId = user.uid;
-
-    if (!profile.ratings) {
-        profile.ratings = {};
-    }
-
-    profile.ratings[userId] = rating;
-    await saveRatingToFirebase(profileName, profile.ratings);
-    document.getElementById('modalProfileRate').innerText = `Your Rating: ${rating}`;
-    calculateAndDisplayRating(profile);
-});
-
-async function saveRatingToFirebase(profileName, ratings) {
-    try {
-        await db.collection('profiles').doc(profileName).set({
-            ratings: ratings
-        }, { merge: true });
-        console.log('Rating saved successfully');
-    } catch (error) {
-        console.error('Error saving rating to Firestore:', error);
-    }
-}
-
 function openProfileModal(profileName) {
     const profile = data.find(item => item.name === profileName);
-    const user = firebase.auth().currentUser;
-
     if (profile) {
-        const linkPrefix = profile.info.source === 'reddit' ? 'u/' : '@';
-        const urlPrefix = profile.info.source === 'reddit' ? 'https://www.reddit.com/user/' : 'https://x.com/';
         const iconPrefix = profile.info.source === 'reddit' ? 'https://preview.redd.it/' : 'https://pbs.twimg.com/profile_images/';
-        const fullUrl = urlPrefix + profile.link;
         const fullicon = iconPrefix + profile.icon;
+        const linkPrefix = profile.info.source === 'reddit' ? 'u/' : '@';
+        const fullUrl = profile.info.source === 'reddit' ? `https://www.reddit.com/user/${profile.link}` : `https://x.com/${profile.link}`;
 
         document.getElementById('linkBodyView').innerHTML = `
             <div class="card mb-3">
@@ -249,7 +218,7 @@ function openProfileModal(profileName) {
                                     <img alt="Profile Picture" class="avatar rounded-1" src="${fullicon}">
                                 </div>
                                 <div class="flex-1">
-                                    <a href="#" class="d-block font-semibold text-sm text-heading text-primary-hover">${profile.name}</a>
+                                    <a href="${fullUrl}" class="d-block font-semibold text-sm text-heading text-primary-hover">${profile.name}</a>
                                     <div class="text-xs text-muted line-clamp-1">${linkPrefix}${profile.link}</div>
                                 </div>
                                 <div class="text-end">
@@ -286,25 +255,6 @@ function openProfileModal(profileName) {
             </div>
         `;
 
-        if (user) {
-            const userId = user.uid;
-            const userRating = profile.ratings ? profile.ratings[userId] : null;
-
-            if (userRating) {
-                document.getElementById('modalProfileRate').innerText = `Your Rating: ${userRating}`;
-                document.getElementById('rate').value = userRating;
-            } else {
-                document.getElementById('modalProfileRate').innerText = 'Your Rating: None';
-                document.getElementById('rate').value = 5;
-            }
-
-            document.getElementById('rate').style.display = 'block';
-        } else {
-            document.getElementById('modalProfileRate').innerText = 'Log in to rate this profile.';
-            document.getElementById('rate').style.display = 'none';
-        }
-
-        calculateAndDisplayRating(profile);
         const profileModal = new bootstrap.Offcanvas(document.getElementById("profileModal"));
         profileModal.show();
     }
