@@ -8,7 +8,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
+const db = firebase.firestore();
 const profilePicture = document.getElementById('profile-picture');
 const profileName = document.getElementById('profile-name');
 const loginButton = document.getElementById('login-button');
@@ -147,8 +147,6 @@ document.getElementById('rate').addEventListener('input', async (event) => {
 });
 
 async function saveRatingToFirebase(profileName, ratings) {
-    const db = firebase.firestore();
-
     try {
         await db.collection('profiles').doc(profileName).set({
             ratings: ratings
