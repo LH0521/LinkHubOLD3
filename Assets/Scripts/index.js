@@ -13,7 +13,6 @@ const profilePicture = document.getElementById('profile-picture');
 const profileName = document.getElementById('profile-name');
 const loginButton = document.getElementById('login-button');
 const savesButton = document.getElementById('saves-button');
-
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
@@ -128,41 +127,11 @@ function setupPagination() {
     });
 }
 
-function openProfileModal(profileName) {
-    const profile = data.find(item => item.name === profileName);
-    const user = firebase.auth().currentUser;
-
-    if (profile && user) {
-        document.getElementById("modalProfileName").innerText = profile.name;
-        document.getElementById("modalProfileSexuality").innerText = `Sexuality: ${profile.details.sexuality}`;
-        document.getElementById("modalProfileBody").innerText = `Body: ${profile.details.body}`;
-        document.getElementById("modalProfileActivity").innerText = `Activity: ${profile.details.activity}`;
-        document.getElementById("modalProfileExperience").innerText = `Experience: ${profile.details.experience}`;
-        document.getElementById("modalProfileRace").innerText = `Race: ${profile.details.race}`;
-        document.getElementById("modalProfileSource").innerText = `Source: ${profile.details.source}`;
-        document.getElementById("modalProfileKinks").innerText = `Kinks: ${profile.details.kinks.join(", ")}`;
-
-        const userId = user.uid;
-        const userRating = profile.ratings ? profile.ratings[userId] : null;
-
-        if (userRating) {
-            document.getElementById('modalProfileRate').innerText = `Your Rating: ${userRating}`;
-            document.getElementById('rate').value = userRating;
-        } else {
-            document.getElementById('modalProfileRate').innerText = 'Your Rating: None';
-            document.getElementById('rate').value = 5;
-        }
-
-        calculateAndDisplayRating(profile);
-        const profileModal = new bootstrap.Offcanvas(document.getElementById("profileModal"));
-        profileModal.show();
-    }
-}
-
 document.getElementById('rate').addEventListener('input', async (event) => {
     const rating = parseInt(event.target.value);
     const profileName = document.getElementById('modalProfileName').innerText;
     const profile = data.find(item => item.name === profileName);
+
     const user = firebase.auth().currentUser;
     if (!user) return;
     const userId = user.uid;
@@ -173,21 +142,9 @@ document.getElementById('rate').addEventListener('input', async (event) => {
 
     profile.ratings[userId] = rating;
     await saveRatingToFirebase(profileName, profile.ratings);
+    document.getElementById('modalProfileRate').innerText = `Your Rating: ${rating}`;
     calculateAndDisplayRating(profile);
 });
-
-function calculateAndDisplayRating(profile) {
-    if (profile.ratings && Object.keys(profile.ratings).length > 0) {
-        const totalRatings = Object.keys(profile.ratings).length;
-        const averageRating = Object.values(profile.ratings).reduce((acc, rating) => acc + rating, 0) / totalRatings;
-
-        document.getElementById('modalProfileRating').innerText = `Rating: ${averageRating.toFixed(1)} / 10`;
-        document.getElementById('modalProfileRatings').innerText = `${totalRatings} Reviews`;
-    } else {
-        document.getElementById('modalProfileRating').innerText = 'Rating: N/A';
-        document.getElementById('modalProfileRatings').innerText = 'No Reviews';
-    }
-}
 
 async function saveRatingToFirebase(profileName, ratings) {
     const db = firebase.firestore();
@@ -202,6 +159,48 @@ async function saveRatingToFirebase(profileName, ratings) {
     }
 }
 
+function openProfileModal(profileName) {
+    const profile = data.find(item => item.name === profileName);
+    const user = firebase.auth().currentUser;
+
+    if (profile && user) {
+        document.getElementById("modalProfileName").innerText = profile.name;
+        document.getElementById("modalProfileSexuality").innerText = `Sexuality: ${profile.details.sexuality}`;
+        document.getElementById("modalProfileBody").innerText = `Body: ${profile.details.body}`;
+        document.getElementById("modalProfileActivity").innerText = `Activity: ${profile.details.activity}`;
+        document.getElementById("modalProfileExperience").innerText = `Experience: ${profile.details.experience}`;
+        document.getElementById("modalProfileRace").innerText = `Race: ${profile.details.race}`;
+        document.getElementById("modalProfileSource").innerText = `Source: ${profile.details.source}`;
+        document.getElementById("modalProfileKinks").innerText = `Kinks: ${profile.details.kinks.join(", ")}`;
+        const userId = user.uid;
+        const userRating = profile.ratings ? profile.ratings[userId] : null;
+
+        if (userRating) {
+            document.getElementById('modalProfileRate').innerText = `Your Rating: ${userRating}`;
+            document.getElementById('rate').value = userRating;
+        } else {
+            document.getElementById('modalProfileRate').innerText = 'Your Rating: None';
+            document.getElementById('rate').value = 5;
+        }
+
+        calculateAndDisplayRating(profile);
+
+        const profileModal = new bootstrap.Offcanvas(document.getElementById("profileModal"));
+        profileModal.show();
+    }
+}
+
+function calculateAndDisplayRating(profile) {
+    if (profile.ratings && Object.keys(profile.ratings).length > 0) {
+        const totalRatings = Object.keys(profile.ratings).length;
+        const averageRating = Object.values(profile.ratings).reduce((acc, rating) => acc + rating, 0) / totalRatings;
+        document.getElementById('modalProfileRating').innerText = `Rating: ${averageRating.toFixed(1)} / 10`;
+        document.getElementById('modalProfileRatings').innerText = `${totalRatings} Reviews`;
+    } else {
+        document.getElementById('modalProfileRating').innerText = 'Rating: N/A';
+        document.getElementById('modalProfileRatings').innerText = 'No Reviews';
+    }
+}
 
 renderResults(filteredData, currentPage);
 setupPagination();
