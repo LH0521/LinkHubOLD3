@@ -120,6 +120,7 @@ function filterResults() {
     const selectedSexuality = Array.from(document.querySelectorAll("input[name='sexuality']:checked")).map(checkbox => checkbox.value);
     const selectedBody = Array.from(document.querySelectorAll("input[name='body']:checked")).map(checkbox => checkbox.value);
     const selectedActivity = Array.from(document.querySelectorAll("input[name='activity']:checked")).map(checkbox => checkbox.value);
+    const selectedKinks = Array.from(document.querySelectorAll("input[name='kinks']:checked")).map(checkbox => checkbox.value);
     filteredData = searchTerm ? fuse.search(searchTerm).map(result => result.item) : [...data];
 
     if (selectedSexuality.length > 0) {
@@ -132,6 +133,10 @@ function filterResults() {
 
     if (selectedActivity.length > 0) {
         filteredData = filteredData.filter(item => selectedActivity.includes(item.details.activity.toLowerCase()));
+    }
+
+    if (selectedKinks.length > 0) {
+        filteredData = filteredData.filter(item => item.details.kinks.some(kink => selectedKinks.includes(kink.toLowerCase())));
     }
 
     if (sortOption === "nameAsc") {
@@ -153,6 +158,10 @@ document.querySelectorAll("input[name='sexuality'], input[name='body'], input[na
 document.getElementById("clearFilters").addEventListener("click", () => {
     document.getElementById("searchBar").value = '';
     document.getElementById("sortOptions").value = 'relevance';
+    document.querySelectorAll("input[name='sexuality'], input[name='body'], input[name='activity']").forEach(checkbox => {
+        checkbox.checked = false;
+    });
+
     filterResults();
 });
 
