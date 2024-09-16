@@ -50,7 +50,7 @@ function updateUIForLoggedInUser(user) {
 }
 
 function resetUIForAnonymousUser() {
-    profilePicture.src = 'Assets/Images/default-avatar.png';
+    profilePicture.src = 'Assets/Images/Brand/logo_3.png';
     profileName.textContent = 'Anonymous';
     loginButton.textContent = 'Login';
     savesButton.style.display = 'none';
