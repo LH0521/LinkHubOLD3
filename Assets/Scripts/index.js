@@ -130,7 +130,9 @@ function setupPagination() {
 
 function openProfileModal(profileName) {
     const profile = data.find(item => item.name === profileName);
-    if (profile) {
+    const user = firebase.auth().currentUser;
+
+    if (profile && user) {
         document.getElementById("modalProfileName").innerText = profile.name;
         document.getElementById("modalProfileSexuality").innerText = `Sexuality: ${profile.details.sexuality}`;
         document.getElementById("modalProfileBody").innerText = `Body: ${profile.details.body}`;
@@ -139,6 +141,18 @@ function openProfileModal(profileName) {
         document.getElementById("modalProfileRace").innerText = `Race: ${profile.details.race}`;
         document.getElementById("modalProfileSource").innerText = `Source: ${profile.details.source}`;
         document.getElementById("modalProfileKinks").innerText = `Kinks: ${profile.details.kinks.join(", ")}`;
+
+        const userId = user.uid;
+        const userRating = profile.ratings ? profile.ratings[userId] : null;
+
+        if (userRating) {
+            document.getElementById('modalProfileRate').innerText = `Your Rating: ${userRating}`;
+            document.getElementById('rate').value = userRating;
+        } else {
+            document.getElementById('modalProfileRate').innerText = 'Your Rating: None';
+            document.getElementById('rate').value = 5;
+        }
+
         calculateAndDisplayRating(profile);
         const profileModal = new bootstrap.Offcanvas(document.getElementById("profileModal"));
         profileModal.show();
@@ -163,9 +177,9 @@ document.getElementById('rate').addEventListener('input', async (event) => {
 });
 
 function calculateAndDisplayRating(profile) {
-    if (profile.ratings && profile.ratings.length > 0) {
-        const totalRatings = profile.ratings.length;
-        const averageRating = profile.ratings.reduce((acc, rating) => acc + rating, 0) / totalRatings;
+    if (profile.ratings && Object.keys(profile.ratings).length > 0) {
+        const totalRatings = Object.keys(profile.ratings).length;
+        const averageRating = Object.values(profile.ratings).reduce((acc, rating) => acc + rating, 0) / totalRatings;
 
         document.getElementById('modalProfileRating').innerText = `Rating: ${averageRating.toFixed(1)} / 10`;
         document.getElementById('modalProfileRatings').innerText = `${totalRatings} Reviews`;
