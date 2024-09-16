@@ -83,16 +83,30 @@ function renderResults(results, page = 1) {
 
     paginatedResults.forEach(item => {
         const div = document.createElement("div");
+        const iconPrefix = item.info.source === 'reddit' ? 'https://preview.redd.it/' : 'https://pbs.twimg.com/profile_images/';
+        const fullicon = iconPrefix + item.icon;
+        const linkPrefix = item.info.source === 'reddit' ? 'u/' : '@';
         div.classList.add("col-md-4", "mb-4");
         div.innerHTML = `
-            <div class="card shadow-sm profile-item" data-name="${item.name}">
-                <div class="card-body text-center">
-                    <img src="${item.icon}" class="img-thumbnail rounded-circle mb-3" style="width: 150px; height: 150px;">
-                    <h5 class="card-title">${item.name}</h5>
-                    <p class="card-text"><strong>Sexuality:</strong> ${item.details.sexuality}</p>
-                    <p class="card-text"><strong>Body:</strong> ${item.details.body}</p>
-                    <p class="card-text"><strong>Activity:</strong> ${item.details.activity}</p>
-                    <button class="btn btn-primary view-details" data-name="${item.name}">View Details</button>
+            <div class="col-lg-4 col-sm-6">
+                <div class="card shadow-4-hover">
+                    <div class="card-body pb-5">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <img alt="Profile Picture" class="avatar rounded-1" src="${fullicon}">
+                            </div>
+                            <div class="flex-1">
+                                <a href="#" class="d-block font-semibold text-sm text-heading text-primary-hover">${item.name}</a>
+                                <div class="text-xs text-muted line-clamp-1">${linkPrefix}${item.link}</div>
+                            </div>
+                            <div class="text-end">
+                                <button type="button" class="btn btn-sm btn-neutral rounded-pill view-button" data-name="${item.name}">
+                                    <i class="bi bi-folder2-open me-1"></i>
+                                    <span>View</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
