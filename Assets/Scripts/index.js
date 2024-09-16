@@ -47,6 +47,7 @@ function updateUIForLoggedInUser(user) {
     profileName.textContent = user.displayName;
     loginButton.textContent = 'Logout';
     savesButton.style.display = 'block';
+    document.getElementById('rate').style.display = 'block';
 }
 
 function resetUIForAnonymousUser() {
@@ -54,6 +55,7 @@ function resetUIForAnonymousUser() {
     profileName.textContent = 'Anonymous';
     loginButton.textContent = 'Login';
     savesButton.style.display = 'none';
+    document.getElementById('rate').style.display = 'none';
 }
 
 let currentPage = 1;
@@ -137,9 +139,36 @@ function openProfileModal(profileName) {
         document.getElementById("modalProfileRace").innerText = `Race: ${profile.details.race}`;
         document.getElementById("modalProfileSource").innerText = `Source: ${profile.details.source}`;
         document.getElementById("modalProfileKinks").innerText = `Kinks: ${profile.details.kinks.join(", ")}`;
-
+        calculateAndDisplayRating(profile);
         const profileModal = new bootstrap.Offcanvas(document.getElementById("profileModal"));
         profileModal.show();
+    }
+}
+
+document.getElementById('rate').addEventListener('input', (event) => {
+    const rating = parseInt(event.target.value);
+    const profileName = document.getElementById('modalProfileName').innerText;
+    const profile = data.find(item => item.name === profileName);
+    
+    if (!profile.ratings) {
+        profile.ratings = [];
+    }
+
+    profile.ratings.push(rating);
+    calculateAndDisplayRating(profile);
+});
+
+
+function calculateAndDisplayRating(profile) {
+    if (profile.ratings && profile.ratings.length > 0) {
+        const totalRatings = profile.ratings.length;
+        const averageRating = profile.ratings.reduce((acc, rating) => acc + rating, 0) / totalRatings;
+
+        document.getElementById('modalProfileRating').innerText = `Rating: ${averageRating.toFixed(1)} / 10`;
+        document.getElementById('modalProfileRatings').innerText = `${totalRatings} Reviews`;
+    } else {
+        document.getElementById('modalProfileRating').innerText = 'Rating: N/A';
+        document.getElementById('modalProfileRatings').innerText = 'No Reviews';
     }
 }
 
