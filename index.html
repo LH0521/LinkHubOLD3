@@ -37,12 +37,80 @@
         </div>
     </div>
 
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="profileModal" aria-labelledby="profileModalLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="profileModalLabel">Profile Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <h4 id="modalProfileName"></h4>
+            <p id="modalProfileSexuality"></p>
+            <p id="modalProfileBody"></p>
+            <p id="modalProfileActivity"></p>
+            <p id="modalProfileExperience"></p>
+            <p id="modalProfileRace"></p>
+            <p id="modalProfileSource"></p>
+            <p id="modalProfileKinks"></p>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <input type="text" id="searchBar" class="form-control" placeholder="Search here...">
+            </div>
+            <div class="col-md-6 d-flex justify-content-end align-items-center">
+                <div class="d-inline-block me-3">
+                    <label>Sort by:</label>
+                    <select id="sortOptions" class="form-select">
+                        <option value="relevance">Relevance</option>
+                        <option value="priceLowToHigh">Price: Low to High</option>
+                        <option value="priceHighToLow">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="nameAsc">A-Z (Name)</option>
+                        <option value="nameDesc">Z-A (Name)</option>
+                    </select>
+                </div>
+                <button id="clearFilters" class="btn btn-outline-danger">Clear Filters</button>
+            </div>
+        </div>
+
+        <div id="resultsContainer" class="row">
+        </div>
+
+        <nav id="pagination" class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+                <li class="page-item">
+                    <button id="prevPage" class="page-link" disabled>Previous</button>
+                </li>
+                <li class="page-item">
+                    <span class="page-link" id="currentPage">1</span>
+                </li>
+                <li class="page-item">
+                    <span class="page-link">/</span>
+                </li>
+                <li class="page-item">
+                    <span class="page-link" id="totalPages">1</span>
+                </li>
+                <li class="page-item">
+                    <button id="nextPage" class="page-link">Next</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+
     <!-- Google -->
     <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
 
+    <!-- Functions-->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
+
     <!-- Locale -->
     <script src="Assets/Scripts/index.js"></script>
+    <script src="Assets/Data/links.js"></script>
 </body>
 
 </html>
